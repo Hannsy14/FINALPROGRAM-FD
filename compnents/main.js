@@ -1,0 +1,9 @@
+require('aframe'); 
+require('aframe-physics-system'); 
+require('aframe-extras'); 
+require('super-hands'); 
+require('aframe-environment-component'); 
+require('aframe-event-set-component'); 
+require('aframe-physics-extras'); 
+require('aframe-gui'); 
+require('three/examples/js/controls/OrbitControls');

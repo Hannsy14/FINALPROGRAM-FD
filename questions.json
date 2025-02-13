@@ -1,0 +1,36 @@
+[
+  {
+    "question": "What is a pulley used for in physics?",
+    "answers": [
+      "A pulley is used to lift heavy objects.",
+      "A pulley is used to push heavy objects."
+    ],
+    "correct": 0
+  },
+  {
+    "question": "What happens to the force needed to lift a weight if you add more pulleys to a system?",
+    "answers": [
+      "Force needed to lift decreases",
+      "Force needed to lift increases"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "Which of Newton’s laws explains why you move backward when you jump off a boat?",
+    "answers": [
+      "Newton’s Third Law",
+      "Newton's Second Law",
+      "Newton's First Law"
+    ],
+    "correct": 0
+  },
+  {
+    "question": "What does Newton’s First Law say about an object at rest?",
+    "answers": [
+      "It will stay at rest",
+      "It will go to the moon",
+      "It will move on its own"
+    ],
+    "correct": 0
+  }
+]

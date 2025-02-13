@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>cOLLISION</title>
+
+        <!-- A-Frame library for building VR experiences -->
+        <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+
+        <!-- A-Frame Physics System for adding physics to A-Frame scenes -->
+        <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.1.0/dist/aframe-physics-system.js"></script>
+
+        <!-- A-Frame Extras for additional components and systems -->
+        <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.1/dist/aframe-extras.min.js"></script>
+
+        <!-- A-Frame Environment Component for creating 3D environments -->
+        <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
+
+        <!-- Super Hands for handling interactions like grabbing and dragging objects -->
+        <script src="https://cdn.jsdelivr.net/gh/LugawPlain/aframe-super-hands-component@master/dist/super-hands.min.js"></script>
+
+        <!-- A-Frame Event Set Component for setting multiple event handlers -->
+        <script src="https://unpkg.com/aframe-event-set-component@^4.1.1/dist/aframe-event-set-component.min.js"></script> 
+
+        <!-- A-Frame Physics Extras for additional physics-related components -->
+        <script src="https://unpkg.com/aframe-physics-extras/dist/aframe-physics-extras.min.js"></script>
+
+        <!-- A-Frame GUI for creating graphical user interfaces in VR -->
+        <script src="https://cdn.jsdelivr.net/gh/rdub80/aframe-gui@v0.3.2/dist/aframe-gui.min.js"></script>
+
+        <!-- Three.js Orbit Controls for enabling orbiting around objects -->
+        <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js/r128/three.min.js"></script>
+
+        
+
+        <!-- Custom Scripts -->
+        <script>
+            AFRAME.registerComponent('phase-shift', {
+                init: function () {
+                  var el = this.el
+                  el.addEventListener('gripdown', function () {
+                    el.setAttribute('collision-filter', {collisionForces: true})
+                  })
+                  el.addEventListener('gripup', function () {
+                    el.setAttribute('collision-filter', {collisionForces: false})
+                  })
+                }
+              });
+        </script>
+        <script src="compnents\TVSettings.js"></script>
+        <script src="compnents\hoverinstruction.js"></script>
+        <script src="compnents\gravitysetting.js"></script>
+        <script src="compnents\my-model.js"></script>
+        <script src="compnents\error.handler.js"></script>
+        <script src="compnents\shapesettings.js"></script>
+        <script src="compnents\infoshapes.js"></script>
+        <script src="compnents\entity.js"></script>
+        <script src="compnents\jump.js"></script>
+</head>
+  <body>
+    <a-scene 
+             id="scene"
+             cursor="rayOrigin: mouse"
+             physics="
+                    debug: TRUE;
+                    gravity: -24.8; 
+                    maxSubSteps: 2;
+                    fixedTimeStep: 1/60;
+                    iterations: 10;"
+             error-handler
+             >
+
+
+    <a-assets>
+
+
+        <a-assets-item id="albert" src="assets\models\albert.glb"></a-assets-item>
+        <a-assets-item id="smtv" src="assets\models\smtv.glb"></a-assets-item>
+        <a-assets-item id="wall" src="assets\models\wall.glb"></a-assets-item>
+        <a-assets-item id="ball" src="assets\models\Basketball.glb"></a-assets-item>
+        <a-assets-item id="table" src="assets\models\table.glb"></a-assets-item>
+        <a-assets-item id="table" src="assets\models\car.glb"></a-assets-item>
+        
+        
+
+        <video id="video1" src="assets\video\NEWTONS.mp4"></video>
+        <video id="video2" src="assets\video\COLLISION.mp4"></video>
+        <video id="video3" src="assets\video\PROJECTILEMOTION.mp4"></video>
+        <video id="video4" src="assets\video\FREEFALL.mp4"></video>
+     </a-assets>
+
+
+<!-- Camera with Cursor -->
+        <!-- <a-entity id="rig"
+                  movement-controls="constrainToNavMesh: true; speed: 0.2;
+                                   controls: checkpoint, gamepad, trackpad, keyboard, nipple;"
+                  position="0 0 0">
+
+                <a-entity 
+                        id="camera"
+                        camera
+                        position="0 1.6 0"
+                        look-controls="pointerLockEnabled: true"
+                        >
+                    <a-cursor
+                        fuse="false"
+                        super-hands="colliderEvent: raycaster-intersection;
+                                     colliderEventProperty: els;
+                                     colliderEndEvent: raycaster-intersection-cleared;
+                                     colliderEndEventProperty: clearedEls;">
+                                     static-body="shape: sphere; sphereRadius: 0.001"
+                    </a-cursor>
+                </a-entity>
+      </a-entity> -->
+
+
+      <a-entity
+      id="rig"
+      position="0 0 -1"
+      movement-controls="speed: 0.2; constrainToNavMesh: true;"
+   >
+      <a-entity
+        id="camera"
+        camera="far: 1000; near: 0.0004;"
+        position="0 1.6 0"
+        look-controls="pointerLockEnabled: true"
+      >
+        <a-cursor
+          fuse="false"
+          super-hands="colliderEvent: raycaster-intersection;
+                       colliderEventProperty: els;
+                       colliderEndEvent: raycaster-intersection-cleared;
+                       colliderEndEventProperty: clearedEls;"
+          static-body="shape: sphere; sphereRadius: 0.001"
+          color="black"
+          
+        ></a-cursor>
+      </a-entity>
+   </a-entity>
+
+
+
+
+
+    
+
+
+       <!-- Gravity settings -->
+       <a-plane position="-4.5 1.8 0.03" rotation="0 0 0" width="3" height="3.410" color="#333" follow-camera-instruction scale=" 1 1 0.280">
+        <!-- Title -->
+        <a-text value="Select Gravity Setting" position="-1.2 1.419 0.01" color="#FFF"></a-text>
+  
+        <!-- Dropdown Options with Clickable Boxes -->
+        <a-entity>
+          <a-text value="Mars (3.7)" position="-1 1.040 0.01" color="#FFF"></a-text>
+          <a-box position="-0.5 1.040 0" width="2" height="0.3" depth="0.01" class="gravity-option" data-gravity="-3.7" opacity="0" onclick="window.location.href='1NewtonsLawMars.html'"></a-box>
+      
+          <a-text value="Earth (9.8)" position="-1 0.692 0.01" color="#FFF"></a-text>
+          <a-box position="-0.5 0.692 0" width="2" height="0.3" depth="0.01" class="gravity-option" data-gravity="-9.8" opacity="0" onclick="window.location.href='1NewtonsLawEarth.html'"></a-box>
+      
+          <a-text value="Jupiter (24.8)" position="-1 0.374 0.01" color="#FFF"></a-text>
+          <a-box position="-0.5 0.374 0" width="2.5" height="0.3" depth="0.01" class="gravity-option" data-gravity="-24.8" opacity="0" scale="0.800 1 1" onclick="window.location.href='1NewtonsLawjupiter.html'"></a-box>
+      
+          <a-text value="Venus (8.9)" position="-1 0.062 0.01" color="#FFF"></a-text>
+          <a-box position="-0.5 0.062 0" width="2.5" height="0.3" depth="0.01" class="gravity-option" data-gravity="-8.9" opacity="0" scale="0.800 1 1" onclick="window.location.href='1NewtonsLawVenus.html'"></a-box>
+      
+          <a-text value="Mercury (3.7)" position="-1 -0.225 0.01" color="#FFF"></a-text>
+          <a-box position="-0.5 -0.225 0" width="2" height="0.3" depth="0.01" class="gravity-option" data-gravity="-3.7" opacity="0" onclick="window.location.href='1NewtonsLawMercury.html'"></a-box>
+      
+          <a-text value="Neptune (11.2)" position="-1 -0.514 0.01" color="#FFF"></a-text>
+          <a-box position="-0.5 -0.514 0" width="2.5" height="0.3" depth="0.01" class="gravity-option" data-gravity="-11.2" opacity="0" scale="0.800 1 1" onclick="window.location.href='1NewtonsLawNeptune.html'"></a-box>
+      
+          <a-text value="Uranus (8.7)" position="-1 -0.809 0.01" color="#FFF"></a-text>
+          <a-box position="-0.5 -0.809 0" width="2.5" height="0.3" depth="0.01" class="gravity-option" data-gravity="-8.7" opacity="0" scale="0.800 1 1" onclick="window.location.href='1NewtonsLawUranus.html'"></a-box>
+
+          <a-text value="Main Menu" position="-1 -1.1 0.01" color="#FFF"></a-text>
+        <a-box position="-0.5 -1.1 0" width="2.5" height="0.3" depth="0.01" class="gravity-option" data-gravity="-8.7" opacity="0" scale="0.800 1 1" onclick="window.location.href='index.html'"></a-box>
+      </a-entity>
+      </a-plane>
+
+
+
+
+           <!-- eNTITY settings -->
+           <a-plane position="-1.094 3.000 4.936" rotation="0 0 0" width="3" height="2" color="#333" follow-camera-instruction scale=" 0.5 0.5 0.5">
+            <!-- Title -->
+            <a-text value="Please Select Entity" position="-1.156 0.632 0.125" color="#FFF"></a-text>
+
+            <!-- Dropdown Options with Clickable Boxes -->
+            <a-entity>
+                <a-text value="Car" position="-1 0 0.020" color="#FFF"></a-text>
+                <a-box position="-0.139 0 -0.005" width="2" height="0.3" depth="0.01" class="entity-option gravity-option" opacity="0" click-handler="spawn: car"></a-box>
+            </a-entity>
+          </a-plane>
+
+          <a-entity id="entity-spawner" position="0.049 2.431 3.525"></a-entity>
+
+
+
+
+
+
+
+          <!-- SHAPE SETTING -->
+      <a-plane position="2.421 3.357 5.879" scale="1 1 0.5" rotation="0 0 0" width="4" height="7" color="#333" geometry="height: 3.3" follow-camera-instruction static-body>
+        <!-- Title -->
+        <a-text value="Available Shapes in A-Frame 1.4.0" position="-1.65821 1.31219 0.09659" color="#FFF" text=""></a-text>
+      
+        <!-- Subtitle -->
+        <a-text value="The shape will spawn with random mass.\nHover your cursor to see details." position="-1.5 0.82927 0.11597" color="#AAA" width="3.5" text=""></a-text>
+      
+        <!-- Dropdown Options with Clickable Boxes -->
+        <a-entity position="0 -1.982 0.116">
+          <a-text value="Box" position="-1 2.2 0.01" color="#FFF"></a-text>
+          <a-box position="-0.5 2.2 0" width="2" height="0.3" depth="0.01" class="shape-option" data-shape="box" opacity="0"></a-box>
+      
+          <a-text value="Sphere" position="-1 1.8 0.01" color="#FFF"></a-text>
+          <a-box position="-0.5 1.8 0" width="2" height="0.3" depth="0.01" class="shape-option" data-shape="sphere" opacity="0"></a-box>
+      
+          <a-text value="Cylinder" position="-1 1.4 0.01" color="#FFF"></a-text>
+          <a-box position="-0.5 1.4 0" width="2" height="0.3" depth="0.01" class="shape-option" data-shape="cylinder" opacity="0"></a-box>
+      
+          <a-text value="Cone" position="-1 1.0 0.01" color="#FFF"></a-text>
+          <a-box position="-0.5 1.0 0.01" width="2" height="0.3" depth="0.01" class="shape-option" data-shape="cone" opacity="0"></a-box>
+
+      </a-plane>
+
+
+
+      
+
+      
+
+
+
+
+
+
+
+
+
+      <!-- Ground settings-->
+      <a-plane static-body color="#7BC8A4" height="100" width="100" scale="0.080 0.1 0.800" rotation="-90 0 0" nav-mesh=""></a-plane>
+
+      <a-entity id="tv" gltf-model="assets\models\smtv.glb" position="0 0.310 -3.067" scale="3 3 3">
+            <a-plane id="video-plane" src="#video1" scale="1.320 0.770 0.1" position="0 0.474 0.010"></a-plane>
+            <a-box id="clickable12" class="clickable" visible="false" position="0 0.474 0.010" scale="1.320 0.770 0.1"></a-box>
+      </a-entity>
+
+      <a-entity hoverable id="Proff" gltf-model="assets/models/albert.glb" position="1.83491 -0.02859 -1.50693" animation-mixer="clip: Take 001; clampWhenFinished: true" rotation="0 -26.285011809421647 0">
+      <a-box hover-info-1 position="0.08593 0.95476 -0.21562" scale="0.75 1.99 1" visible="true"  material="opacity: 0; transparent: true" ></a-box>
+      </a-entity>
+
+      <a-entity id="table" scale="60 15 60" gltf-model="#table" position="0 0 3.639" >
+        <a-plane static-body visible="false" scale="0.114 0.040 1" position="0 0.052 0" rotation="90 0 0"></a-plane>
+        <a-plane static-body visible="false" scale="0.114 0.1 1" position="0 0.097 0.020" rotation="0 0 90"></a-plane>
+        <a-plane static-body visible="false" scale="0.044 0.1 1" position="-0.056 0.097 0" rotation="0 -90 0"></a-plane>
+        <a-plane static-body visible="false" scale="0.044 0.1 1" position="0.056 0.097 0" rotation="0 90 0"></a-plane>
+      </a-entity>
+
+
+
+
+      <!-- model shits need to fix -->
+      <!-- <a-entity dynamic-body="" hoverable grabbable stretchable draggable droppable scale="1 1 1" position="1 2 3.6">
+        <a-gltf-model src="#ball" scale="3 3 3" visible="true" dynamic-body></a-gltf-model>
+      </a-entity> -->
+
+      
+      <a-box position="-2.177 1.339 3.525" scale="1 1 0.940" dynamic-body hoverable grabbable stretchable draggable droppable geometry="depth: 0.61; height: 0.57; width: 1.1" material="opacity: 0; transparent: true">      
+      <a-entity id="car" gltf-model="assets\models\car.glb"  scale="0.002 0.002 0.002" position="0 -0.240 0" animation-mixer="clip: Car engine; clampWhenFinished: true"></a-entity>
+      </a-box>
+      
+
+            
+      <!-- <a-box my-model id="box" dynamic-body hoverable grabbable stretchable draggable droppable scale="1 1 1" position="1 2 3.6" ></a-box>
+      <a-sphere my-model id="box" dynamic-body hoverable grabbable stretchable draggable droppable scale="1 1 1" position="-1 2 3.6"></a-sphere> -->
+      
+      
+      <!-- Sky -->
+      <a-sky color="#ECECEC"></a-sky>   
+
+    </a-scene>
+
+
+
+
+
+
+
+
+
+
+    
+
+  </body>
+</html>

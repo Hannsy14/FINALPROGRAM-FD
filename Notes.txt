@@ -1,0 +1,16 @@
+Projectile Motion: Use a ball to study the motion of projectiles. Launch the ball at different angles and velocities to analyze its trajectory, range, and the effect of gravity. You can use a protractor and a launcher to achieve consistent angles and measure the distance traveled.
+
+Collision: Demonstrate the conservation of momentum by colliding two balls of different masses on a track. Measure their velocities before and after the collision to show that the total momentum is conserved.
+
+Newton's Laws of Motion: Conduct various experiments to demonstrate Newton's laws. For example, roll a ball on a flat surface to show inertia, apply force to change its motion, and observe the reaction forces during collisions.
+
+Ohms law :lesson only
+
+PULLY experiments: Use two balls, one elastic (like a rubber ball) and one inelastic (like a clay ball), and compare their collisions. Measure the velocities before and after the collisions to study the differences in momentum conservation.
+
+need to install for deployment
+npm install --save aframe-physics-system
+npm install --save aframe-extras
+npm install super-hands
+npm install -g browserify
+browserify my-app.js -o bundle.js
