@@ -29,22 +29,28 @@
     <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js/r128/three.min.js"></script>
   </head>
   <body>
-    <a-scene>
-      <!-- Ground, placed far below to avoid appearing close -->
-      <a-entity geometry="height: 1000; width: 1000" material="color: green; repeat: 50 50;" static-body rotation="-90 0 0" position="0 0 0"></a-entity>
+    <a-scene environment="preset: forest; groundColor: #228B22; groundTexture: walk; groundSize: 25; skyType: gradient; skyColor: #87CEEB; lighting: flat">
+      <!-- Add ambient light for brightness -->
+      <a-light type="flat" color="#ffffff" intensity="0.2"></a-light>
+      
+      <!-- Ground with smaller borders -->
+      <a-entity geometry="primitive: plane; height: 50; width: 50" material="color: #228B22; repeat: 10 10;" static-body rotation="-90 0 0" position="0 0 0"></a-entity>
 
       <!-- Flying objects container -->
       <a-entity id="objects"></a-entity>
+
+      <!-- Player entity -->
+      <a-entity id="player" position="0 1.6 0"></a-entity>
       <a-sky color="#87CEEB"></a-sky>
       <!-- Gravity settings -->
-      <a-plane position="-4.5 1.8 0.03" rotation="0 0 0" width="3" height="3.410" color="#333" follow-camera-instruction scale=" 1 1 0.280">
+      <a-plane position="-4.5 1.8 0.03" rotation="0 0 0" width="3" height="3.410" color="#333" scale="1 1 0.280">
         <!-- Title -->
-        <a-text value="Go back" position="-1.2 1.419 0.01" color="#FFF"></a-text>
+        <a-text value="Solve for force as\n spheres collide!\n Go back" position="-1.2 1.1 0.01" color="#FFF"></a-text>
 
         <!-- Dropdown Options with Clickable Boxes -->
         <a-entity>
-            <a-text value="Click Me" position="-1 1.040 0.01" color="#FFF"></a-text>
-            <a-box position="-0.5 1.040 0" width="2" height="0.3" depth="0.01" class="gravity-option" data-gravity="-3.7" opacity="0" onclick="window.location.href='2Collision.html'"></a-box>
+            <a-text value="Click Me" position="-1 -1 0.01" color="#FFF"></a-text>
+            <a-box position="-1 -1 0.01" width="2" height="0.3" depth="0.01" class="gravity-option" data-gravity="-3.7" opacity="0" onclick="window.location.href='2Collision.html'"></a-box>
         </a-entity>
       </a-plane>
       <a-entity
@@ -76,48 +82,109 @@
       const player = document.getElementById('player');
       const objects = document.getElementById('objects');
 
-      // Simulate constant free fall
-      setInterval(() => {
-        const position = player.getAttribute('position');
-        player.setAttribute('position', {
-          x: position.x,
-          y: position.y - 1,
-          z: position.z
-        });
-      }, 30);
+      AFRAME.registerComponent('trail', {
+        schema: { color: { type: 'color', default: '#ff0000' } },
+        init: function () {
+          this.el.addEventListener('collide', (event) => {
+            if (event.detail.contact && event.detail.body && event.detail.body.velocity) {
+              const force = event.detail.contact.ni; // Example force calculation
+              const velocity = event.detail.body.velocity.length();
+              this.showImpactForceAndVelocity(force, velocity, event.detail.contact.point);
+            }
+            });
+          },
+          tick: function () {
+            const position = this.el.getAttribute('position');
+            const trailSphere = document.createElement('a-sphere');
+            trailSphere.setAttribute('radius', 0.05);
+            trailSphere.setAttribute('color', this.data.color);
+            trailSphere.setAttribute('position', position);
+            trailSphere.setAttribute('opacity', 0.5);
+            document.querySelector('a-scene').appendChild(trailSphere);
+            setTimeout(() => trailSphere.remove(), 110);
+          },
+          showImpactForceAndVelocity: function (force, velocity, position) {
+            const forceText = document.createElement('a-text');
+            forceText.setAttribute('value', `Force: ${force.toFixed(2)}\nVelocity: ${velocity.toFixed(2)}`);
+            forceText.setAttribute('position', {
+            x: position.x,
+            y: position.y + 1,
+            z: position.z
+            });
+            forceText.setAttribute('color', 'white');
+            forceText.setAttribute('align', 'center');
+            forceText.setAttribute('rotation', '0 0 0'); // Prevent rotation
+            forceText.setAttribute('look-at', '#camera'); // Make text always face the camera
+            document.querySelector('a-scene').appendChild(forceText);
+            setTimeout(() => forceText.remove(), 2000);
+          }
+            });
 
-      // Create and animate random objects flying past the player
-      function spawnObject() {
-        const obj = document.createElement('a-sphere');
-        obj.setAttribute('radius', Math.random() * 0.5 + 0.2);
-        obj.setAttribute('color', `#${Math.floor(Math.random()*16777215).toString(16)}`);
-        obj.setAttribute('position', {
-          x: (Math.random() - 0.5) * 30,
-          y: 10,
-          z: (Math.random() - 0.5) * 30
-        });
-        obj.setAttribute("dynamic-body", {
-                    shape: "sphere",
-                });
-        objects.appendChild(obj);
+            // Simulate constant free fall
+            setInterval(() => {
+          const position = player.getAttribute('position');
+          player.setAttribute('position', {
+            x: position.x,
+            y: position.y - 1,
+            z: position.z
+          });
+            }, 30);
 
-        // Animate object flying past
-        const interval = setInterval(() => {
-          const pos = obj.getAttribute('position');
+            // Create and animate random objects flying past the player
+            function spawnObject() {
+          const obj = document.createElement('a-sphere');
+          obj.setAttribute('radius', Math.random() * 0.5 + 0.2);
+          obj.setAttribute('color', `#${Math.floor(Math.random() * 16777215).toString(16)}`);
           obj.setAttribute('position', {
+            x: (Math.random() - 0.5) * 5, // Reduced range for closer spawning
+            y: 10,
+            z: (Math.random() - 0.5) * 5 // Reduced range for closer spawning
+          });
+          obj.setAttribute("dynamic-body", "shape: sphere;");
+          obj.setAttribute('trail', 'color: yellow');
+
+          // Add a-text to display numerical values
+          const text = document.createElement('a-text');
+          text.setAttribute('value', `Force: 0.00\nVelocity: 0.00`);
+          text.setAttribute('color', 'white');
+          text.setAttribute('align', 'center');
+          text.setAttribute('position', { x: 0, y: 1, z: 0 });
+          text.setAttribute('rotation', '0 0 0'); // Prevent rotation
+          text.setAttribute('look-at', '#camera'); // Make text always face the camera
+          obj.appendChild(text);
+
+          objects.appendChild(obj);
+
+          // Automatically remove the object after 12 seconds
+          setTimeout(() => {
+            if (objects.contains(obj)) {
+            objects.removeChild(obj);
+            }
+          }, 12000);
+
+          const interval = setInterval(() => {
+            const pos = obj.getAttribute('position');
+            const velocity = obj.body.velocity.length(); // Get velocity
+            const force = obj.body && obj.body.force ? Math.sqrt(obj.body.force.x ** 2 + obj.body.force.y ** 2 + obj.body.force.z ** 2) : 0; // Calculate force magnitude if available
+
+            obj.setAttribute('position', {
             x: pos.x + (Math.random() - 0.5) * 0.6,
             y: pos.y - 2,
             z: pos.z + (Math.random() - 0.5) * 0.6
-          });
-          
-          if (pos.y < player.getAttribute('position').y - 50) {
+            });
+
+            // Update text position and value
+            text.setAttribute('value', `Force: ${force.toFixed(2)}\nVelocity: ${velocity.toFixed(2)}`);
+            text.setAttribute('position', { x: 0, y: 1, z: 0 });
+
+            if (pos.y < player.getAttribute('position').y - 50) {
             objects.removeChild(obj);
             clearInterval(interval);
-          }
-        }, 30);
-      }
+            }
+          }, 30);
+            }
 
-      setInterval(spawnObject, 200);
+            setInterval(spawnObject, 500);
     </script>
   </body>
 </html>
