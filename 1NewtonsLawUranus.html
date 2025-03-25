@@ -242,10 +242,14 @@
       <!-- Ground settings-->
       <a-plane static-body color="#7BC8A4" height="100" width="100" scale="0.080 0.1 0.800" rotation="-90 0 0" nav-mesh=""></a-plane>
 
-      <a-entity id="tv" gltf-model="assets\models\smtv.glb" position="0 0.310 -3.067" scale="3 3 3">
-            <a-plane id="video-plane" src="#video1" scale="1.320 0.770 0.1" position="0 0.474 0.010"></a-plane>
-            <a-box id="clickable12" class="clickable" visible="false" position="0 0.474 0.010" scale="1.320 0.770 0.1"></a-box>
-      </a-entity>
+      <a-entity id="tv" gltf-model="#smtv" position="0 0.310 -3.067" scale="3 3 3">
+        <a-plane id="video-plane" material="src: #video1" scale="1.320 0.770 0.1" position="0 0.474 0.010"></a-plane>
+        <a-box id="clickable1" class="clickable" 
+               material="transparent: true; opacity: 0" 
+               position="0 0.474 0.010" 
+               scale="1.320 0.770 0.1">
+        </a-box>
+    </a-entity>
 
       <a-entity hoverable id="Proff" gltf-model="assets/models/albert.glb" position="1.83491 -0.02859 -1.50693" animation-mixer="clip: Take 001; clampWhenFinished: true" rotation="0 -26.285011809421647 0">
       <a-box hover-info-1 position="0.08593 0.95476 -0.21562" scale="0.75 1.99 1" visible="true"  material="opacity: 0; transparent: true" ></a-box>
